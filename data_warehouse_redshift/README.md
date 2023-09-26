@@ -196,6 +196,8 @@ Following are a few analytical questions that the corporate users of Sparkify wo
 
 * What is the distribution of song plays across different weekdays?
 
+*Note: Queries to retrive these questions have been added to the `sql_queries.py` script.*
+
 ## Issues - Findings
 
 * In the song_data, certain anomalies were detected, leading to the adjustment of the artist_location, artist_name, and title columns to accommodate exceptionally long values: varchar(max).
