@@ -22,8 +22,11 @@ iam = boto3.client('iam', region_name=REGION, aws_access_key_id=KEY, aws_secret_
 redshift = boto3.client('redshift', region_name=REGION, aws_access_key_id=KEY, aws_secret_access_key=SECRET)
 ec2 = boto3.resource('ec2', region_name=REGION, aws_access_key_id=KEY, aws_secret_access_key=SECRET)
 
-# create IAM role and attach policies
+
 def create_iam_role():
+    """
+    Creates an IAM role and attaches policies to it.
+    """
     print("Creating IAM Role...")
 
     iam_role = iam.create_role(
@@ -52,8 +55,10 @@ def create_iam_role():
     return iam_role_arn
 
 
-# create Redshift cluster
 def create_cluster(role_arn):
+    """
+    Creates a Redshift cluster.
+    """
     print("Creating Redshift Cluster...")
 
     response = redshift.create_cluster(
@@ -72,8 +77,10 @@ def create_cluster(role_arn):
     print("...Redshift Cluster Created!")
 
 
-# open a TCP port for cluster endpoint
 def create_vpc(myClusterProps, port):
+    """
+    Opens a TCP port for cluster endpoints.
+    """
     print("Opening TCP Port for cluster endpoints...")
     
     vpc = ec2.Vpc(id=myClusterProps['VpcId'])
@@ -89,8 +96,10 @@ def create_vpc(myClusterProps, port):
     print(f"...TCP Port {port} Opened!")
 
 
-# describe the cluster details
 def describe(cluster_identifier):
+    """
+    Describes the cluster details.
+    """
     myClusterProps = redshift.describe_clusters(ClusterIdentifier=cluster_identifier)['Clusters'][0]
         
     print(f"Cluster Endpoint: {myClusterProps['Endpoint']['Address']}")
@@ -119,4 +128,4 @@ def main(action):
 
 
 if __name__ == "__main__":
-    main("describe")
+    main("create")
