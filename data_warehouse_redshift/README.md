@@ -181,11 +181,27 @@ python3 etl.py
 ```
 *Note: The script `sql_queries.py` contains **all** the SQL queries needed for the project. At the end of the file, there are lists, that control which queries will be used in which context that are used by other scripts, i.e., `create_tables.py` and `etl.py`. Logs are printed to the console to track the processes.*
 
+
+### Analysis
+
+Following are a few analytical questions that the corporate users of Sparkify would find interesting:
+
+* What are the top 5 songs played by users?
+
+* Who are the top 5 artists with the most song plays?
+
+* How many users are subscribed to each level (free or paid)?
+
+* What is the average duration of songs played by users in each month?
+
+* What is the distribution of song plays across different weekdays?
+
 ## Issues - Findings
 
 * In the song_data, certain anomalies were detected, leading to the adjustment of the artist_location, artist_name, and title columns to accommodate exceptionally long values: varchar(max).
-
+* It took a long time to add the song_data to its staging table.
 
 ## Extras
 
-An IPython notebook *`checks.ipynb`* has also been added to the project to perform individual checks for the services or connections if needed.
+* An IPython notebook *`checks.ipynb`* has been added to the project to perform individual checks for the services or connections if needed.
+* A separate script *`analytics.py`* has been added to the project to execute the analytical quries added to *`sql_queries.py`*.

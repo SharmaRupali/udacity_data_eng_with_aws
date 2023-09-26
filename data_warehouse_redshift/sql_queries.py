@@ -54,7 +54,7 @@ staging_songs_table_create = (
         artist_longitude    double precision,
         artist_location     varchar(max),
         artist_name         varchar(max),
-        song_id             varchar sortkey, ??
+        song_id             varchar sortkey,
         title               varchar(max),
         duration            double precision,
         year                integer
@@ -241,6 +241,60 @@ time_table_insert = (
     """
 )
 
+# ANALYTICAL QUERIES
+
+top_5_songs = (
+    """
+    SELECT s.title AS song_title, a.name AS artist_name, COUNT(sp.songplay_id) AS play_count
+    FROM songplays sp
+        JOIN songs s ON sp.song_id = s.song_id
+        JOIN artists a ON sp.artist_id = a.artist_id
+    GROUP BY song_title, artist_name
+    ORDER BY play_count DESC
+    LIMIT 5;
+    """
+)
+
+top_5_artists = (
+    """
+    SELECT a.name AS artist_name, COUNT(sp.songplay_id) AS play_count
+    FROM songplays sp
+        JOIN artists a ON sp.artist_id = a.artist_id
+    GROUP BY artist_name
+    ORDER BY play_count DESC
+    LIMIT 5;
+    """
+)
+
+num_users_subs = (
+    """
+    SELECT level, COUNT(DISTINCT user_id) AS user_count
+    FROM users
+    GROUP BY level;
+    """
+)
+
+avg_song_duration = (
+    """
+    SELECT t.month, AVG(s.duration) AS average_duration
+    FROM songplays sp
+        JOIN songs s ON sp.song_id = s.song_id
+        JOIN time t ON sp.start_time = t.start_time
+    GROUP BY t.month
+    ORDER BY t.month;
+    """
+)
+
+dist_song_plays = (
+    """
+    SELECT t.weekday, COUNT(sp.songplay_id) AS play_count
+    FROM songplays sp
+        JOIN time t ON sp.start_time = t.start_time
+    GROUP BY t.weekday
+    ORDER BY t.weekday;
+    """
+)
+
 # QUERY LISTS
 
 create_table_queries = [
@@ -274,4 +328,12 @@ insert_table_queries = [
     song_table_insert, 
     artist_table_insert, 
     time_table_insert
+]
+
+analytical_queries = [
+    top_5_songs,
+    top_5_artists,
+    num_users_subs,
+    avg_song_duration,
+    dist_song_plays
 ]
