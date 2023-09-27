@@ -1,11 +1,23 @@
-import configparser
+"""
+Database Schema and ETL Queries
 
+This script defines the SQL queries for creating tables, dropping tables, copying data from staging tables, 
+inserting data into analytical tables, and running analytical queries on a database. 
+The queries are organized into categories and lists for ease of execution.
+
+Author: SharmaRupali (https://github.com/SharmaRupali)
+
+Please ensure that 'dwh.cfg' is properly configured before executing the ETL process.
+"""
+
+import configparser
 
 # CONFIG
 config = configparser.ConfigParser()
 config.read('dwh.cfg')
 
 # DROP TABLES
+# SQL queries to drop staging and analytical tables if they exist
 
 staging_events_table_drop = "DROP TABLE IF EXISTS staging_events;"
 staging_songs_table_drop = "DROP TABLE IF EXISTS staging_songs;"
@@ -16,6 +28,7 @@ artist_table_drop = "DROP TABLE IF EXISTS artists;"
 time_table_drop = "DROP TABLE IF EXISTS time;"
 
 # CREATE TABLES
+# SQL queries to create staging and analytical tables
 
 staging_events_table_create= (
     """
@@ -52,9 +65,9 @@ staging_songs_table_create = (
         artist_id           varchar not null distkey,
         artist_latitude     double precision,
         artist_longitude    double precision,
-        artist_location     varchar(max) not null,
+        artist_location     varchar(max),
         artist_name         varchar(max),
-        song_id             varchar not null sortkey,
+        song_id             varchar sortkey,
         title               varchar(max),
         duration            double precision not null,
         year                integer not null
@@ -68,12 +81,12 @@ songplay_table_create = (
     (
         songplay_id         bigint identity(1,1) primary key sortkey, 
         start_time          timestamp not null, 
-        user_id             integer not null distkey, 
+        user_id             varchar not null distkey, 
         level               varchar not null,
-        song_id             varchar not null,
-        artist_id           varchar not null, 
-        session_id          integer not null ,
-        location            varchar not null,
+        song_id             varchar,
+        artist_id           varchar, 
+        session_id          integer not null,
+        location            varchar,
         user_agent          varchar
     )
     """
@@ -86,7 +99,7 @@ user_table_create = (
         user_id             varchar primary key sortkey, 
         first_name          varchar, 
         last_name           varchar, 
-        gender              varchar not null, 
+        gender              varchar, 
         level               varchar not null
     )
     diststyle all;
@@ -114,7 +127,7 @@ artist_table_create = (
     (
         artist_id           varchar primary key sortkey, 
         name                varchar(max), 
-        location            varchar(max) not null,
+        location            varchar(max),
         latitude            double precision,
         longitude           double precision
     )
@@ -139,6 +152,7 @@ time_table_create = (
 )
 
 # STAGING TABLES
+# SQL queries to copy data from S3 to staging tables
 
 staging_events_copy = (
     """
@@ -166,6 +180,7 @@ staging_songs_copy = (
 )
 
 # FINAL TABLES
+# SQL queries to insert data into analytical tables
 
 songplay_table_insert = (
     """
@@ -236,7 +251,7 @@ time_table_insert = (
             extract(week from ts),
             extract(month from ts),
             extract(year from ts),
-            extract(weekday from ts), 
+            extract(weekday from ts)
         FROM tmp_time;
     """
 )
