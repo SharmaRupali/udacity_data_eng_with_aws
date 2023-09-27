@@ -186,15 +186,96 @@ python3 etl.py
 
 Following are a few analytical questions that the corporate users of Sparkify would find interesting:
 
-* What are the top 5 songs played by users?
+#### What are the top 5 songs played by users?
+```
+SELECT s.title AS song_title, a.name AS artist_name, COUNT(sp.songplay_id) AS play_count
+FROM songplays sp
+    JOIN songs s ON sp.song_id = s.song_id
+    JOIN artists a ON sp.artist_id = a.artist_id
+GROUP BY song_title, artist_name
+ORDER BY play_count DESC
+LIMIT 5;
+```
 
-* Who are the top 5 artists with the most song plays?
+**Query Result:**
+|   | song_title  | artist_name  |  play_count |
+|---|---|---|---|
+| 0 | Greece 2000 | 3 Drives On A Vinyl | 55 |
+| 1 | You're The One | Dwight Yoakam Duet with Maria McKee | 37 |
+| 2 | Stronger | Kanye West | 28 |
+| 3 | Revelry | Kings Of Leon | 27 |
+| 4 | Somebody To Love | Justin Bieber / Usher | 26|
 
-* How many users are subscribed to each level (free or paid)?
+#### Who are the top 5 artists with the most song plays?
 
-* What is the average duration of songs played by users in each month?
+```
+SELECT a.name AS artist_name, COUNT(sp.songplay_id) AS play_count
+FROM songplays sp
+    JOIN artists a ON sp.artist_id = a.artist_id
+GROUP BY artist_name
+ORDER BY play_count DESC
+LIMIT 5;
+```
 
-* What is the distribution of song plays across different weekdays?
+**Query Result:**
+|  | artist_name  | play_count  |
+|---|---|---|
+| 0 | Kings Of Leon | 77 |
+| 1 | Coldplay | 71 |
+| 2 | The Killers / Toni Halliday | 62 |
+| 3 | Eminem / Paul "Bunyan" Rosenburg | 59 |
+| 4 |  Kanye West | 56 |
+
+#### How many users are subscribed to each level (free or paid)?
+
+```
+SELECT level, COUNT(DISTINCT user_id) AS user_count
+    FROM users
+    GROUP BY level;
+```
+
+**Query Result:**
+|   | level | user_count |
+|---|---|---|
+| 0 | free | 84 |
+| 1 | paid | 23 |
+
+#### What is the average duration of songs played by users in each month?
+
+```
+SELECT t.month, AVG(s.duration) AS average_duration
+    FROM songplays sp
+        JOIN songs s ON sp.song_id = s.song_id
+        JOIN time t ON sp.start_time = t.start_time
+    GROUP BY t.month
+    ORDER BY t.month;
+```
+
+**Query Result:**
+|   | month |  average_duration |
+|---|---|---|
+| 0 |    11 |        251.522689 |
+
+#### What is the distribution of song plays across different weekdays?
+
+```
+SELECT t.weekday, COUNT(sp.songplay_id) AS play_count
+    FROM songplays sp
+        JOIN time t ON sp.start_time = t.start_time
+    GROUP BY t.weekday
+    ORDER BY t.weekday;
+```
+
+**Query Result:**
+|    | weekday | play_count
+|---|---|---|
+| 0  | 0 | 424
+| 1  | 1 | 1110
+| 2  | 2 | 1201
+| 3  | 3 | 1540
+| 4  | 4 | 1173
+| 5  | 5 | 1440
+| 6  | 6 | 706
 
 *Note: Queries to retrive these questions have been added to the `sql_queries.py` script.*
 
