@@ -230,8 +230,8 @@ LIMIT 5;
 
 ```
 SELECT level, COUNT(DISTINCT user_id) AS user_count
-    FROM users
-    GROUP BY level;
+FROM users
+GROUP BY level;
 ```
 
 **Query Result:**
@@ -244,11 +244,11 @@ SELECT level, COUNT(DISTINCT user_id) AS user_count
 
 ```
 SELECT t.month, AVG(s.duration) AS average_duration
-    FROM songplays sp
-        JOIN songs s ON sp.song_id = s.song_id
-        JOIN time t ON sp.start_time = t.start_time
-    GROUP BY t.month
-    ORDER BY t.month;
+FROM songplays sp
+    JOIN songs s ON sp.song_id = s.song_id
+    JOIN time t ON sp.start_time = t.start_time
+GROUP BY t.month
+ORDER BY t.month;
 ```
 
 **Query Result:**
@@ -260,10 +260,10 @@ SELECT t.month, AVG(s.duration) AS average_duration
 
 ```
 SELECT t.weekday, COUNT(sp.songplay_id) AS play_count
-    FROM songplays sp
-        JOIN time t ON sp.start_time = t.start_time
-    GROUP BY t.weekday
-    ORDER BY t.weekday;
+FROM songplays sp
+    JOIN time t ON sp.start_time = t.start_time
+GROUP BY t.weekday
+ORDER BY t.weekday;
 ```
 
 **Query Result:**
