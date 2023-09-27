@@ -1,8 +1,10 @@
 """
-@Author: SharmaRupali (https://github.com/SharmaRupali)
+AWS Resource Management Script
 
-This script has functions to create new AWS resources and delete the exisitng ones.
-Please make sure all the properties are filled in 'dwh.cfg' before executing this script
+Author: SharmaRupali (https://github.com/SharmaRupali)
+
+This script provides functions to create and delete AWS resources. 
+Ensure that all the required properties are properly configured in 'dwh.cfg' before executing this script.
 """
 
 import boto3
@@ -23,15 +25,28 @@ redshift = boto3.client('redshift', region_name=REGION, aws_access_key_id=KEY, a
 ec2 = boto3.resource('ec2', region_name=REGION, aws_access_key_id=KEY, aws_secret_access_key=SECRET)
 
 
-def create_iam_role():
+def create_iam_role(role_name):
     """
-    Creates an IAM role and attaches policies to it.
+    Create an AWS IAM Role.
+
+    This function creates an AWS Identity and Access Management (IAM) Role with the specified name and policies, 
+    allowing Redshift clusters to call AWS services on our behalf.
+
+    Parameters:
+    role_name (str): The name of the IAM Role to create.
+
+    Returns:
+    str: The ARN (Amazon Resource Name) of the created IAM Role.
+
+    Example:
+    iam_role_arn = create_iam_role(IAM_ROLE_NAME)
     """
+    
     print("Creating IAM Role...")
 
     iam_role = iam.create_role(
         Path='/',
-        RoleName=IAM_ROLE_NAME,
+        RoleName=role_name,
         Description='Allows Redshift clusters to call AWS services on your behalf.',
         AssumeRolePolicyDocument=json.dumps({
             'Statement': [{
@@ -44,21 +59,35 @@ def create_iam_role():
     )
 
     iam.attach_role_policy(
-        RoleName=IAM_ROLE_NAME,
+        RoleName=role_name,
         PolicyArn='arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess'
     )['ResponseMetadata']['HTTPStatusCode']
 
-    iam_role_arn = iam.get_role(RoleName=IAM_ROLE_NAME)['Role']['Arn']
+    iam_role_arn = iam.get_role(RoleName=role_name)['Role']['Arn']
 
     print("...IAM Role Created!")
 
     return iam_role_arn
 
 
-def create_cluster(role_arn):
+def create_cluster(role_arn, config):
     """
-    Creates a Redshift cluster.
+    Create an Amazon Redshift Cluster.
+
+    This function creates an Amazon Redshift cluster with the specified configuration and associates 
+    it with the provided IAM Role.
+
+    Parameters:
+    role_arn (str): The ARN (Amazon Resource Name) of the IAM Role to associate with the cluster.
+    config (configparser.ConfigParser): Configuration settings read from 'dwh.cfg'.
+
+    Returns:
+    None
+
+    Example:
+    create_cluster(iam_role_arn, config)
     """
+    
     print("Creating Redshift Cluster...")
 
     response = redshift.create_cluster(
@@ -79,8 +108,21 @@ def create_cluster(role_arn):
 
 def create_vpc(myClusterProps, port):
     """
-    Opens a TCP port for cluster endpoints.
+    Open a TCP Port for cluster endpoints in the VPC.
+
+    This function opens a specified TCP port for cluster endpoints within the Virtual Private Cloud (VPC).
+
+    Parameters:
+    myClusterProps (dict): The cluster properties.
+    port (str): The TCP port number to open.
+
+    Returns:
+    None
+
+    Example:
+    create_vpc(myClusterProps, '5439')
     """
+    
     print("Opening TCP Port for cluster endpoints...")
     
     vpc = ec2.Vpc(id=myClusterProps['VpcId'])
@@ -98,8 +140,21 @@ def create_vpc(myClusterProps, port):
 
 def describe(cluster_identifier):
     """
-    Describes the cluster details.
+    Describe an Amazon Redshift Cluster.
+
+    This function retrieves and displays information about the specified Amazon Redshift cluster, 
+    such as its endpoint and associated IAM Role ARN.
+
+    Parameters:
+    cluster_identifier (str): The identifier of the Redshift cluster.
+
+    Returns:
+    None
+
+    Example:
+    describe('my-redshift-cluster')
     """
+    
     myClusterProps = redshift.describe_clusters(ClusterIdentifier=cluster_identifier)['Clusters'][0]
         
     print(f"Cluster Endpoint: {myClusterProps['Endpoint']['Address']}")
@@ -107,9 +162,25 @@ def describe(cluster_identifier):
 
 
 def main(action):
+    """
+    Main function to manage AWS resources.
+
+    This function is the main entry point for managing AWS resources. It performs actions based on the specified 'action' parameter, 
+    including creating, describing, creating VPC rules for, or deleting AWS resources.
+
+    Parameters:
+    action (str): The action to perform ('create', 'describe', 'create_vpc', 'delete').
+
+    Returns:
+    None
+
+    Example:
+    main('create')
+    """
+    
     if action == "create":
-        iam_role_arn = create_iam_role()
-        create_cluster(iam_role_arn)
+        iam_role_arn = create_iam_role(IAM_ROLE_NAME)
+        create_cluster(iam_role_arn, config)
     elif action == "describe":
         describe(config.get('CLUSTER_CONFIG', 'CLUSTER_IDENTIFIER'))
     elif action == "create_vpc":
