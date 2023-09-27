@@ -33,12 +33,12 @@ staging_events_table_create= (
         method              varchar,
         page                varchar,
         registration        bigint,
-        session_id          integer sortkey,
+        session_id          integer not null sortkey,
         song                varchar,
         status              integer,
-        ts                  bigint,
+        ts                  bigint not null,
         user_agent          varchar,
-        user_id             varchar distkey
+        user_id             varchar not null distkey
     )
     """
 )
@@ -49,15 +49,15 @@ staging_songs_table_create = (
     CREATE TABLE staging_songs
     (
         num_songs           integer,
-        artist_id           varchar distkey,
+        artist_id           varchar not null distkey,
         artist_latitude     double precision,
         artist_longitude    double precision,
-        artist_location     varchar(max),
+        artist_location     varchar(max) not null,
         artist_name         varchar(max),
-        song_id             varchar sortkey,
+        song_id             varchar not null sortkey,
         title               varchar(max),
-        duration            double precision,
-        year                integer
+        duration            double precision not null,
+        year                integer not null
     )
     """
 )
@@ -67,13 +67,13 @@ songplay_table_create = (
     CREATE TABLE songplays 
     (
         songplay_id         bigint identity(1,1) primary key sortkey, 
-        start_time          timestamp, 
-        user_id             integer distkey, 
-        level               varchar,
-        song_id             varchar,
-        artist_id           varchar, 
-        session_id          integer,
-        location            varchar,
+        start_time          timestamp not null, 
+        user_id             integer not null distkey, 
+        level               varchar not null,
+        song_id             varchar not null,
+        artist_id           varchar not null, 
+        session_id          integer not null ,
+        location            varchar not null,
         user_agent          varchar
     )
     """
@@ -86,8 +86,8 @@ user_table_create = (
         user_id             varchar primary key sortkey, 
         first_name          varchar, 
         last_name           varchar, 
-        gender              varchar, 
-        level               varchar
+        gender              varchar not null, 
+        level               varchar not null
     )
     diststyle all;
     """
@@ -99,9 +99,9 @@ song_table_create = (
     (
         song_id             varchar primary key sortkey, 
         title               varchar(max), 
-        artist_id           varchar,
-        year                integer,
-        duration            double precision
+        artist_id           varchar not null,
+        year                integer not null,
+        duration            double precision not null
     )
     diststyle all;
     """
@@ -114,7 +114,7 @@ artist_table_create = (
     (
         artist_id           varchar primary key sortkey, 
         name                varchar(max), 
-        location            varchar(max),
+        location            varchar(max) not null,
         latitude            double precision,
         longitude           double precision
     )
@@ -169,7 +169,7 @@ staging_songs_copy = (
 
 songplay_table_insert = (
     """
-    INSERT INTO songplays
+    INSERT INTO songplays (start_time, user_id, level, song_id, artist_id, session_id, location, user_agent)
         SELECT 
             TIMESTAMP 'epoch' + (events.ts/1000 * INTERVAL '1 second'),
             events.user_id,
