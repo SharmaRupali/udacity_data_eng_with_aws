@@ -31,19 +31,19 @@
 #     "description": "", 
 #     "host": "", 
 #     "schema": "", 
-#     "login": "AKIAR52K74ML45RHMCGD", 
+#     "login": "...", 
 #     "password": "skJWKU/kjPkIhg8HMzxkIhJd7/FSOBcJ9bZNMhLb", 
 #     "port": null, 
 #     "is_encrypted": "True", 
 #     "is_extra_encrypted": "True", 
 #     "extra_dejson": {}, 
-#     "get_uri": "aws://AKIAR52K74ML45RHMCGD:skJWKU%2FkjPkIhg8HMzxkIhJd7%2FFSOBcJ9bZNMhLb@"
+#     "get_uri": "..."
 # }]
 # 
 #
 # TO-DO: Update the following command with the URI and un-comment it:
 #
-airflow connections add aws_credentials --conn-uri 'aws://AKIAR52K74ML45RHMCGD:skJWKU%2FkjPkIhg8HMzxkIhJd7%2FFSOBcJ9bZNMhLb@'
+airflow connections add aws_credentials --conn-uri '...'
 #
 #
 # TO-DO: run the follwing command and observe the JSON output: 
@@ -74,7 +74,7 @@ airflow connections add aws_credentials --conn-uri 'aws://AKIAR52K74ML45RHMCGD:s
 #     "conn_id": "redshift", 
 #     "conn_type": "redshift", 
 #     "description": "", 
-#     "host": "default-workgroup.132764394263.us-west-2.redshift-serverless.amazonaws.com", 
+#     "host": "default-workgroup.....redshift-serverless.amazonaws.com", 
 #     "schema": "dev", 
 #     "login": "awsuser", 
 #     "password": "R3dsh1ft", 
@@ -82,13 +82,13 @@ airflow connections add aws_credentials --conn-uri 'aws://AKIAR52K74ML45RHMCGD:s
 #     "is_encrypted": "True", 
 #     "is_extra_encrypted": "True", 
 #     "extra_dejson": {}, 
-#     "get_uri": "redshift://awsuser:R3dsh1ft@default-workgroup.132764394263.us-west-2.redshift-serverless.amazonaws.com:5439/dev"
+#     "get_uri": "redshift://awsuser:....redshift-serverless.amazonaws.com:5439/dev"
 # }]
 # 
 #
 # TO-DO: Update the following command with the URI and un-comment it:
 #
-airflow connections add redshift --conn-uri 'redshift://awsuser:R3dsh1ft@default-workgroup.132764394263.us-west-2.redshift-serverless.amazonaws.com:5439/dev'
+airflow connections add redshift --conn-uri 'redshift://awsuser:....redshift-serverless.amazonaws.com:5439/dev'
 #
 # TO-DO: update the following bucket name to match the name of your S3 bucket and un-comment it:
 #
